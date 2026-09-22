@@ -186,7 +186,7 @@
         <!-- ===================== SIDEBAR ===================== -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
                class="fixed inset-y-0 left-0 z-50 w-68 sidebar-bg text-white transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl lg:static lg:z-auto"
-               style="width:260px;">
+               style="width:300px;">
 
             <div>
                 <!-- Brand / Logo -->
@@ -218,7 +218,7 @@
                 </p>
 
                 <!-- Navigation Links -->
-                <nav style="padding: 0 0.625rem; display:flex; flex-direction:column; gap:2px;">
+                <nav style="padding: 0 0.625rem; display:flex; flex-direction:column; gap:0.5rem; flex:1;">
 
                     <a href="{{ route('dashboard') }}"
                        class="nav-item {{ request()->routeIs('dashboard') ? 'nav-active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm">
@@ -273,28 +273,67 @@
             </div>
 
             <!-- Sidebar Footer -->
-            <div style="padding:1rem;">
+            <div style="padding:1rem; border-top:1px solid rgba(56,189,248,0.1); display:flex; flex-direction:column; gap:0.75rem;">
+                
+                <!-- Account Quick Info Card -->
+                <div class="status-card" style="padding:0.75rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                        <i class="fa-solid fa-circle-user" style="font-size:1.2rem; color:#38bdf8;"></i>
+                        <div style="flex:1; min-width:0;">
+                            <p style="font-size:11px; font-weight:700; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                {{ Auth::check() ? Auth::user()->name : 'Tamu' }}
+                            </p>
+                            <p style="font-size:9px; color:#64748b; margin-top:2px;">
+                                {{ Auth::check() && Auth::user()->role === 'admin' ? 'Admin' : (Auth::check() && Auth::user()->kelas ? Auth::user()->kelas : 'Siswa') }}
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 pulse-online flex-shrink-0"></span>
+                        <span style="font-size:9px; color:#64748b;">Status: Online</span>
+                    </div>
+                </div>
+
+                <!-- System Status Card -->
                 <div class="status-card" style="padding:0.75rem;">
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.375rem;">
-                        <span class="w-2 h-2 rounded-full bg-green-400 pulse-online flex-shrink-0"></span>
-                        <span style="font-size:11px; font-weight:700; color:#94a3b8;">Sistem: Online &amp; Aktif</span>
+                        <i class="fa-solid fa-server" style="font-size:0.9rem; color:#38bdf8;"></i>
+                        <span style="font-size:10px; font-weight:700; color:#94a3b8;">Sistem Online &amp; Aktif</span>
                     </div>
-                    <p style="font-size:10px; color:#475569; line-height:1.5;">
+                    <p style="font-size:9px; color:#475569; line-height:1.5; margin-left:1.4rem;">
                         EduVerse v4.0 &bull; T.A. 2025/2026
                     </p>
+                </div>
+
+                <!-- Quick Shortcuts -->
+                <div style="border-top:1px solid rgba(56,189,248,0.1); padding-top:0.75rem;">
+                    <p style="font-size:8px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#475569; margin-bottom:0.5rem;">
+                        Shortcuts
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:0.375rem;">
+                        <a href="#" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border-radius:0.5rem; font-size:10px; font-weight:600; color:#94a3b8; transition:all 0.2s ease; text-decoration:none;" onmouseenter="this.style.background='rgba(14,165,233,0.1)'; this.style.color='#e2e8f0';" onmouseleave="this.style.background='transparent'; this.style.color='#94a3b8';">
+                            <i class="fa-solid fa-gear" style="font-size:0.8rem;"></i> Setelan Akun
+                        </a>
+                        <a href="#" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border-radius:0.5rem; font-size:10px; font-weight:600; color:#94a3b8; transition:all 0.2s ease; text-decoration:none;" onmouseenter="this.style.background='rgba(14,165,233,0.1)'; this.style.color='#e2e8f0';" onmouseleave="this.style.background='transparent'; this.style.color='#94a3b8';">
+                            <i class="fa-solid fa-circle-question" style="font-size:0.8rem;"></i> Bantuan & FAQ
+                        </a>
+                        <a href="#" style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem; border-radius:0.5rem; font-size:10px; font-weight:600; color:#94a3b8; transition:all 0.2s ease; text-decoration:none;" onmouseenter="this.style.background='rgba(14,165,233,0.1)'; this.style.color='#e2e8f0';" onmouseleave="this.style.background='transparent'; this.style.color='#94a3b8';">
+                            <i class="fa-solid fa-envelope" style="font-size:0.8rem;"></i> Hubungi Admin
+                        </a>
+                    </div>
                 </div>
             </div>
         </aside>
 
         <!-- Mobile backdrop -->
         <div x-show="sidebarOpen" @click="sidebarOpen = false"
-             class="mobile-overlay fixed inset-0 z-40 lg:hidden" x-cloak></div>
+             class="mobile-overlay fixed inset-0 z-30 lg:hidden" x-cloak></div>
 
         <!-- ===================== MAIN WRAPPER ===================== -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
             <!-- TOP HEADER -->
-            <header class="header-glass sticky top-0 z-30 flex items-center justify-between"
+            <header class="header-glass sticky top-0 z-40 flex items-center justify-between"
                     style="height:64px; padding: 0 1.5rem;">
 
                 <div class="flex items-center gap-3">
@@ -315,7 +354,7 @@
                     </div>
 
                     <!-- Search Bar -->
-                    <div class="relative hidden sm:block" style="width:260px;">
+                    <div class="relative hidden sm:block" style="width:280px;">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2"
                            style="color:#64748b; font-size:0.8rem;"></i>
                         <input type="text"
@@ -384,22 +423,42 @@
                         </div>
                     </div>
 
-                    <!-- Divider -->
-                    <div class="header-divider h-8 w-px mx-1"></div>
+                    <!-- User Profile Dropdown -->
+                    <div class="relative" x-data="{ profileOpen: false }">
+                        <button @click="profileOpen = !profileOpen" class="flex items-center gap-2.5 text-left focus:outline-none">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ Auth::check() ? Auth::user()->name : 'Guest' }}"
+                                 alt="Profile"
+                                 class="w-9 h-9 rounded-xl avatar-ring flex-shrink-0 transition-transform hover:scale-105"
+                                 style="background: #1e293b;">
+                            <div class="hidden sm:block">
+                                <h4 style="font-size:0.82rem; font-weight:800; color:#e2e8f0; line-height:1.2;">
+                                    {{ Auth::check() ? Auth::user()->name : 'Tamu' }}
+                                </h4>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    <span class="badge-class px-2 py-0.5 rounded-lg" style="font-size:10px; font-weight:800; letter-spacing:0.05em;">
+                                        {{ Auth::check() && Auth::user()->role === 'admin' ? 'ADMIN' : (Auth::check() && Auth::user()->kelas ? Auth::user()->kelas : 'SISWA') }}
+                                    </span>
+                                    <span style="font-size:11px; font-weight:700; color:#4ade80; display:flex; align-items:center; gap:4px;">
+                                        <i class="fa-solid fa-chevron-down text-slate-500" style="font-size:0.7rem; margin-left:4px;"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </button>
 
-                    <!-- User Profile -->
-                    <div class="flex items-center gap-2.5">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=MedelinStudent"
-                             alt="Siswa Profile"
-                             class="w-9 h-9 rounded-xl avatar-ring flex-shrink-0"
-                             style="background: #1e293b;">
-                        <div class="hidden sm:block text-left">
-                            <h4 style="font-size:0.82rem; font-weight:800; color:#e2e8f0; line-height:1.2;">Siswa Medelin</h4>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                <span class="badge-class px-2 py-0.5 rounded-lg" style="font-size:10px; font-weight:800; letter-spacing:0.05em;">XII RPL</span>
-                                <span style="font-size:11px; font-weight:700; color:#4ade80; display:flex; align-items:center; gap:4px;">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>Online
-                                </span>
+                        <!-- Profile Menu -->
+                        <div x-show="profileOpen" @click.outside="profileOpen = false"
+                             class="absolute right-0 mt-3 w-48 rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl z-50 overflow-hidden" x-cloak>
+                            <div class="p-3 border-b border-slate-700/50">
+                                <p class="text-xs text-slate-400 font-semibold mb-1">Masuk sebagai:</p>
+                                <p class="text-sm font-bold text-slate-200 truncate">{{ Auth::check() ? Auth::user()->email : '-' }}</p>
+                            </div>
+                            <div class="p-1.5">
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors flex items-center gap-2">
+                                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar (Logout)
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

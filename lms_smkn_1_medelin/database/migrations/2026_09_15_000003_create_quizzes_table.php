@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('title');
-            $table->string('subject');
             $table->text('description')->nullable();
             $table->integer('duration_minutes')->default(60);
             $table->timestamp('start_time')->nullable();

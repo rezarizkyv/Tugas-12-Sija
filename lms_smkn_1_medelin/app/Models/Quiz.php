@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Quiz extends Model
 {
     protected $fillable = [
+        'course_id',
         'code',
         'title',
-        'subject',
         'description',
         'duration_minutes',
         'start_time',
@@ -33,6 +34,11 @@ class Quiz extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
     }
 
     public function examLogs(): HasMany

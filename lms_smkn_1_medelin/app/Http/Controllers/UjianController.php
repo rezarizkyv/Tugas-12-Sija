@@ -3,101 +3,150 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Quiz;
+use App\Models\ExamViolation;
+use Illuminate\Support\Facades\Log;
 
 class UjianController extends Controller
 {
     public function index()
     {
-        $exams = [
-            [
-                'id' => 101,
-                'code' => 'PTS-2026-WEB',
-                'title' => 'Penilaian Tengah Semester (PTS) - Pemrograman Web & Mobile',
-                'subject' => 'Pemrograman Web',
-                'duration' => 60,
-                'questions_count' => 20,
-                'start_time' => '08:00 WIB',
-                'end_time' => '09:00 WIB',
-                'is_secure' => true,
-                'status' => 'active', // active, upcoming, completed
-            ],
-            [
-                'id' => 102,
-                'code' => 'QUIZ-BD-02',
-                'title' => 'Kuis Harian 2 - Normalisasi & Indexing Basis Data',
-                'subject' => 'Basis Data',
-                'duration' => 30,
-                'questions_count' => 10,
-                'start_time' => '10:30 WIB',
-                'end_time' => '11:00 WIB',
-                'is_secure' => true,
-                'status' => 'upcoming',
-            ],
-            [
-                'id' => 103,
-                'code' => 'TRYOUT-UKK-RPL',
-                'title' => 'Tryout Uji Kompetensi Keahlian (UKK) RPL 2026',
-                'subject' => 'Kejuruan RPL',
-                'duration' => 120,
-                'questions_count' => 40,
-                'start_time' => 'Selesai 10 Sep',
-                'end_time' => '10 Sep 2026',
-                'is_secure' => true,
-                'status' => 'completed',
-                'score' => 92.5,
-            ],
-        ];
+        // Load exams with their questions and course data
+        $exams = Quiz::with(['course', 'questions'])->get();
 
-        // Sample CBT Exam Simulator Data
-        $activeExam = [
-            'id' => 101,
-            'code' => 'PTS-2026-WEB',
-            'title' => 'Penilaian Tengah Semester (PTS) - Pemrograman Web & Mobile',
-            'subject' => 'Pemrograman Web',
-            'time_remaining_seconds' => 2840, // 47 minutes left
-            'questions' => [
-                [
-                    'id' => 1,
-                    'number' => 1,
-                    'text' => 'Di bawah ini yang merupakan keuntungan utama dari penggunaan arsitektur MVC (Model-View-Controller) dalam pengembangan aplikasi web modern dengan Laravel adalah...',
-                    'options' => [
-                        'A' => 'Memisahkan logika bisnis, tampilan visual, dan penanganan request sehingga kode lebih terstruktur dan mudah di-maintain.',
-                        'B' => 'Mempercepat kecepatan koneksi internet pengguna secara otomatis saat mengakses server.',
-                        'C' => 'Menghilangkan kebutuhan akan basis data relasional MySQL.',
-                        'D' => 'Membuat kode HTML tidak perlu dikompilasi oleh web browser.',
-                    ],
-                    'selected' => 'A',
-                    'is_doubtful' => false,
-                ],
-                [
-                    'id' => 2,
-                    'number' => 2,
-                    'text' => 'Perintah Artisan yang digunakan untuk menjalankan migrasi database serta mengisikan data dummy awal (seeding) secara bersamaan di Laravel adalah...',
-                    'options' => [
-                        'A' => 'php artisan migrate:fresh --seed',
-                        'B' => 'php artisan make:migration --all',
-                        'C' => 'php artisan db:start --force',
-                        'D' => 'php artisan run:seeder',
-                    ],
-                    'selected' => null,
-                    'is_doubtful' => true,
-                ],
-                [
-                    'id' => 3,
-                    'number' => 3,
-                    'text' => 'Fungsi utama dari penggunaan token CSRF (@csrf) pada form HTML di Laravel adalah untuk...',
-                    'options' => [
-                        'A' => 'Mencegah serangan Cross-Site Request Forgery dengan memverifikasi bahwa request berasal dari aplikasi resmi.',
-                        'B' => 'Mempercepat kompresi gambar yang diunggah oleh pengguna.',
-                        'C' => 'Menyimpan data password pengguna dalam bentuk plain text.',
-                        'D' => 'Mengubah halaman web menjadi aplikasi native Android.',
-                    ],
-                    'selected' => 'A',
-                    'is_doubtful' => false,
-                ],
-            ]
-        ];
+        return view('ujian', compact('exams'));
+    }
 
-        return view('ujian', compact('exams', 'activeExam'));
+    /**
+     * Record a violation during exam (tab switch, blur, etc)
+     */
+    public function recordViolation(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'quiz_id' => 'required|exists:quizzes,id',
+                'violation_type' => 'required|string',
+                'warning_count' => 'required|integer|min:1|max:3',
+            ]);
+
+            // Log the violation
+            $violation = ExamViolation::create([
+                'quiz_id' => $validated['quiz_id'],
+                'student_id' => auth()->id() ?? null,
+                'violation_type' => $validated['violation_type'],
+                'warning_count' => $validated['warning_count'],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            Log::warning('Exam Violation Recorded', [
+                'quiz_id' => $validated['quiz_id'],
+                'student_id' => auth()->id(),
+                'violation_type' => $validated['violation_type'],
+                'warning_count' => $validated['warning_count'],
+                'ip' => $request->ip(),
+            ]);
+
+            // If 3rd warning, mark student as locked
+            if ($validated['warning_count'] >= 3) {
+                $this->lockStudentFromExam($validated['quiz_id']);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pelanggaran dicatat dalam sistem',
+                'locked' => $validated['warning_count'] >= 3,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error recording exam violation', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false], 500);
+        }
+    }
+
+    /**
+     * Submit exam with answers
+     */
+    public function submitExam(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'quiz_id' => 'required|exists:quizzes,id',
+                'answers' => 'nullable|array',
+            ]);
+
+            // Check if student is locked
+            if ($this->isStudentLockedFromExam($validated['quiz_id'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda telah dikeluarkan dari ujian ini karena pelanggaran sistem keamanan',
+                    'locked' => true,
+                ], 403);
+            }
+
+            // TODO: Save exam submission to database
+            // This would grade the answers and save results
+            
+            Log::info('Exam Submitted', [
+                'quiz_id' => $validated['quiz_id'],
+                'student_id' => auth()->id(),
+                'answered_questions' => count($validated['answers'] ?? []),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ujian berhasil dikumpulkan',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error submitting exam', ['error' => $e->getMessage()]);
+            return response()->json(['success' => false], 500);
+        }
+    }
+
+    /**
+     * Lock a student from accessing an exam after 3rd violation
+     */
+    private function lockStudentFromExam($quizId)
+    {
+        $quiz = Quiz::find($quizId);
+        if (!$quiz) return;
+
+        // Lock student by adding to locked_students list (if using JSON field)
+        // Or create a separate exam_locks table
+        // For now, log the lock event
+        Log::alert('Student Locked From Exam', [
+            'quiz_id' => $quizId,
+            'student_id' => auth()->id(),
+            'timestamp' => now(),
+        ]);
+    }
+
+    /**
+     * Check if student is locked from accessing an exam
+     */
+    private function isStudentLockedFromExam($quizId)
+    {
+        // Check if student has 3+ violations on this quiz
+        $criticalViolations = ExamViolation::forQuiz($quizId)
+            ->forStudent(auth()->id())
+            ->critical()
+            ->exists();
+
+        return $criticalViolations;
+    }
+
+    /**
+     * Get violation history for an exam (admin view)
+     */
+    public function getViolationHistory($quizId)
+    {
+        if (!auth()->user() || !auth()->user()->isAdmin) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $violations = ExamViolation::forQuiz($quizId)
+            ->orderBy('recorded_at', 'desc')
+            ->get();
+
+        return response()->json($violations);
     }
 }
