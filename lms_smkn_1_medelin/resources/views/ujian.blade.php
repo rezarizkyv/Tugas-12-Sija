@@ -264,69 +264,95 @@
         </div>
     </div>
 
-    <!-- WARNING MODAL - NON-DISMISSABLE -->
-    <div id="warning-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl max-w-sm mx-4 shadow-2xl border-2 border-red-500 overflow-hidden">
+    <!-- =====================================================
+         [NEW] WARNING MODAL — PERINGATAN 1 & 2
+         Tampil modal informatif untuk peringatan ke-1 dan ke-2
+         ===================================================== -->
+    <div id="warning-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9998]">
+        <div class="bg-slate-900 rounded-3xl max-w-sm mx-4 shadow-2xl border-2 border-yellow-500 overflow-hidden animate-bounce-once">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-6 text-center">
-                <i class="fa-solid fa-triangle-exclamation text-3xl mb-2 block animate-bounce"></i>
-                <h3 class="text-2xl font-bold">PERINGATAN!</h3>
-                <p class="text-xs text-red-100 mt-1 font-semibold">Anda Meninggalkan Jendela Ujian</p>
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6 text-center">
+                <i class="fa-solid fa-triangle-exclamation text-3xl mb-2 block"></i>
+                <h3 class="text-2xl font-black">PERINGATAN!</h3>
+                <p class="text-xs text-yellow-100 mt-1 font-semibold" id="warning-modal-subtitle">Anda Meninggalkan Jendela Ujian</p>
             </div>
 
             <!-- Body -->
             <div class="p-6 space-y-4">
                 <!-- Counter -->
-                <div class="text-center p-4 rounded-2xl bg-red-50 border border-red-200">
-                    <p class="text-xs text-red-700 font-medium mb-1">PERINGATAN KE:</p>
-                    <p class="text-4xl font-bold text-red-600" id="warning-display">1</p>
-                    <p class="text-xs text-red-700 font-medium mt-1">dari 3 Peringatan</p>
+                <div class="text-center p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/40">
+                    <p class="text-xs text-yellow-300 font-semibold mb-1">PERINGATAN KE:</p>
+                    <p class="text-5xl font-black text-yellow-400" id="warning-display">1</p>
+                    <p class="text-xs text-yellow-300 font-semibold mt-1">dari 3 Peringatan</p>
                 </div>
 
-                <!-- Message -->
-                <div class="p-4 rounded-2xl bg-yellow-50 border border-yellow-200">
-                    <p class="text-xs text-yellow-800 font-bold mb-2">⚠️ INGAT:</p>
-                    <ul class="text-xs text-yellow-800 space-y-1 font-medium">
+                <!-- Jenis Pelanggaran -->
+                <div class="p-3 rounded-2xl bg-slate-800 border border-slate-700">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Jenis Pelanggaran</p>
+                    <p class="text-sm font-bold text-white" id="warning-violation-type">Pindah tab / Jendela tidak aktif</p>
+                </div>
+
+                <!-- Reminder -->
+                <div class="p-4 rounded-2xl bg-red-900/40 border border-red-500/40">
+                    <p class="text-xs text-red-300 font-bold mb-2">⚠️ INGAT:</p>
+                    <ul class="text-xs text-red-200 space-y-1 font-medium">
                         <li class="flex gap-2"><span>•</span> <span>Peringatan ke-3 = Ujian dikumpulkan otomatis</span></li>
                         <li class="flex gap-2"><span>•</span> <span>Jawaban yang sudah ada TETAP akan dinilai</span></li>
-                        <li class="flex gap-2"><span>•</span> <span>Pelanggaran akan dilaporkan</span></li>
+                        <li class="flex gap-2"><span>•</span> <span>Pelanggaran akan dilaporkan ke guru</span></li>
                     </ul>
                 </div>
 
-                <!-- Info -->
-                <p class="text-xs text-slate-600 text-center italic font-medium">
-                    Kembali ke jendela ujian untuk melanjutkan. Modal ini TIDAK BISA ditutup.
-                </p>
+                <!-- Close Button (hanya untuk warning 1 & 2) -->
+                <button id="warning-close-btn" onclick="closeWarningModal()" 
+                    class="w-full py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm transition-all">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Kembali ke Ujian
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- KICKED MODAL - AUTO SUBMIT -->
-    <div id="kicked-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl max-w-sm mx-4 shadow-2xl overflow-hidden">
+    <!-- =====================================================
+         [NEW] KICKED MODAL — PERINGATAN KE-3 (BAHAYA)
+         Modal merah khusus untuk auto-submit karena pelanggaran ke-3
+         ===================================================== -->
+    <div id="kicked-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[9999]">
+        <div class="bg-slate-900 rounded-3xl max-w-sm mx-4 shadow-2xl border-2 border-red-600 overflow-hidden">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-red-600 to-red-700 text-white p-8 text-center">
-                <i class="fa-solid fa-lock text-4xl mb-2 block"></i>
-                <h2 class="text-2xl font-bold">Ujian Selesai</h2>
-                <p class="text-xs text-red-100 mt-1 font-semibold">Sistem Auto-Submit Aktif</p>
+            <div class="bg-gradient-to-r from-red-700 to-red-800 text-white p-8 text-center">
+                <div class="w-20 h-20 rounded-full bg-red-900/60 border-4 border-red-400 flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-lock text-4xl text-red-300"></i>
+                </div>
+                <h2 class="text-2xl font-black">UJIAN DIHENTIKAN</h2>
+                <p class="text-sm text-red-200 mt-1 font-bold">Peringatan Ke-3 — Auto Submit Aktif</p>
             </div>
 
             <!-- Body -->
-            <div class="p-8 space-y-4 text-center">
-                <div class="p-4 rounded-2xl bg-red-50 border border-red-200">
-                    <p class="text-sm font-bold text-red-700 mb-2">Ujian Dikumpulkan Otomatis</p>
-                    <p class="text-xs text-red-600 leading-relaxed">
-                        Anda telah meninggalkan jendela ujian sebanyak 3 kali. Sistem keamanan telah mengumpulkan ujian Anda secara otomatis.
+            <div class="p-6 space-y-4 text-center">
+                <div class="p-4 rounded-2xl bg-red-900/30 border border-red-600/50">
+                    <p class="text-sm font-black text-red-300 mb-2">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i>
+                        Ujian Dikumpulkan Otomatis
+                    </p>
+                    <p class="text-xs text-red-200 leading-relaxed">
+                        Anda telah meninggalkan jendela ujian sebanyak <strong>3 kali</strong>. 
+                        Sistem keamanan telah mengumpulkan ujian Anda secara otomatis.
                     </p>
                 </div>
 
-                <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200">
-                    <p class="text-xs text-blue-700 font-medium">
-                        <i class="fa-solid fa-info-circle mr-1"></i> Jawaban yang sudah Anda kerjakan tetap akan dinilai. Pelanggaran dicatat dalam sistem.
+                <div class="p-4 rounded-2xl bg-blue-900/30 border border-blue-600/40">
+                    <p class="text-xs text-blue-300 font-medium leading-relaxed">
+                        <i class="fa-solid fa-info-circle mr-1"></i> 
+                        Jawaban yang sudah Anda kerjakan tetap akan dinilai. 
+                        Seluruh pelanggaran telah dicatat dan dilaporkan ke guru/admin.
                     </p>
                 </div>
 
-                <button onclick="goBackToList()" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-all">
+                <div id="kicked-countdown" class="text-sm font-bold text-slate-400">
+                    Menutup otomatis dalam <span id="kicked-counter-num" class="text-white">5</span> detik...
+                </div>
+
+                <button onclick="goBackToList()" 
+                    class="w-full py-3 rounded-2xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-sm transition-all">
                     <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Daftar Ujian
                 </button>
             </div>
@@ -335,30 +361,42 @@
 
 </div>
 
-<!-- Load Lock Mode Library -->
+<!-- Load Lock Mode Library (FIXED v2) -->
 <script src="{{ asset('js/exam-lock-mode.js') }}"></script>
 
 <script>
+// ==================== META TOKEN ====================
+const CSRF_TOKEN = '{{ csrf_token() }}';
+
+// ==================== VIOLATION TYPE LABELS ====================
+const VIOLATION_LABELS = {
+    'tab_switch':        'Pindah tab / browser',
+    'window_blur':       'Jendela tidak aktif / fokus hilang',
+    'page_hide':         'Halaman disembunyikan',
+    'keyboard_shortcut': 'Shortcut keyboard terlarang',
+    'dev_tools':         'Kemungkinan DevTools dibuka',
+    'unknown':           'Pelanggaran sistem',
+};
+
 // ==================== EXAM STATE ====================
 const examState = {
-    currentExam: null,
-    questions: [],
+    currentExam:     null,
+    questions:       [],
     currentQuestion: 0,
-    answers: {},
-    doubtful: {},
-    lockMode: null,
-    examActive: false,
-    warningCount: 0,
-    maxWarnings: 3,
-    timerInterval: null,
-    timeRemaining: 0
+    answers:         {},
+    doubtful:        {},
+    lockMode:        null,     // [FIX #1] instance ExamLockMode, di-reset tiap sesi
+    examActive:      false,
+    warningCount:    0,
+    maxWarnings:     3,
+    timerInterval:   null,
+    timeRemaining:   0,
 };
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✓ Exam page loaded');
     
-    // Setup consent checkbox
     document.getElementById('exam-consent').addEventListener('change', function() {
         document.getElementById('start-exam-btn').disabled = !this.checked;
     });
@@ -367,10 +405,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // ==================== EXAM PREVIEW ====================
 function openExamPreview(examId, examTitle) {
     const exams = @json($exams);
-    const exam = exams.find(e => e.id === examId);
-    
+    const exam  = exams.find(e => e.id === examId);
     if (!exam) return;
-    
+
     window.selectedExam = exam;
     document.getElementById('preview-exam-title').textContent = examTitle;
     document.getElementById('exam-preview-modal').classList.remove('hidden');
@@ -387,132 +424,211 @@ function closeExamPreview() {
 function startExam() {
     const exam = window.selectedExam;
     if (!exam) return;
-    
-    examState.currentExam = exam;
-    examState.questions = exam.questions || [];
+
+    // ── Reset state untuk sesi baru ──────────────────────────────────
+    examState.currentExam     = exam;
+    examState.questions       = exam.questions || [];
     examState.currentQuestion = 0;
-    examState.answers = {};
-    examState.doubtful = {};
-    examState.warningCount = 0;
-    
+    examState.answers         = {};
+    examState.doubtful        = {};
+    examState.warningCount    = 0;   // [FIX #1] reset counter pelanggaran
+
     if (!examState.questions.length) {
         alert('Ujian tidak memiliki soal!');
         return;
     }
-    
-    // Close preview modal
+
     closeExamPreview();
-    
+
     // Switch view
-    document.getElementById('exam-list-view').style.display = 'none';
-    document.getElementById('exam-room-view').style.display = 'block';
-    
-    // Initialize lock mode
+    document.getElementById('exam-list-view').style.display  = 'none';
+    document.getElementById('exam-room-view').style.display  = 'block';
+
+    // [FIX #1] Destroy instance lama lalu buat yang baru — cegah listener menumpuk
     initializeLockMode();
     examState.lockMode.setExamActive(true);
     examState.examActive = true;
-    
-    // Render content
+
+    // Reset counter display
+    document.getElementById('warning-counter').textContent = '0';
+
+    // Render
     renderQuestion();
     renderQuestionMap();
     startTimer();
-    
+
+    // Kirim log "start" ke server
+    logExamEvent(exam.id, 'start', 'Ujian dimulai');
+
     console.log('✓ Exam started:', exam.title, 'with', examState.questions.length, 'questions');
 }
 
 // ==================== LOCK MODE ====================
+/**
+ * [FIX #1] Selalu destroy instance lama dan buat baru.
+ * Ini mencegah listener menumpuk antar sesi ujian.
+ */
 function initializeLockMode() {
-    if (examState.lockMode) return;
-    
+    // Jika ada instance lama, cabut semua listenernya dulu
+    if (examState.lockMode) {
+        examState.lockMode.destroyEventListeners();
+        examState.lockMode = null;
+    }
+
     examState.lockMode = new ExamLockMode({
         maxWarnings: examState.maxWarnings,
+        // [FIX #2] onWarning dipanggil untuk SEMUA level (1, 2, dan 3)
         onWarning: (data) => handleWarning(data),
-        onLocked: (data) => handleKicked(data)
+        onLocked:  (data) => handleKicked(data),
     });
 }
 
+/**
+ * [FIX #2] handleWarning sekarang membedakan modal peringatan 1-2 vs ke-3.
+ */
 function handleWarning(data) {
-    console.warn('⚠️ Warning #' + data.count);
+    console.warn('⚠️ Warning #' + data.count, data.type);
+
     examState.warningCount = data.count;
-    
     document.getElementById('warning-counter').textContent = data.count;
-    document.getElementById('warning-display').textContent = data.count;
-    document.getElementById('warning-modal').classList.remove('hidden');
-    
-    // Auto-hide warning after 5 seconds (can be brought back by switching tab again)
-    setTimeout(() => {
-        if (examState.examActive && !examState.lockMode.isLocked) {
-            document.getElementById('warning-modal').classList.add('hidden');
-        }
-    }, 5000);
+
+    // Tentukan label jenis pelanggaran
+    const violationLabel = VIOLATION_LABELS[data.type] || VIOLATION_LABELS['unknown'];
+
+    if (data.count < examState.maxWarnings) {
+        // ── Peringatan 1 atau 2: tampilkan modal kuning ──────────────
+        document.getElementById('warning-display').textContent        = data.count;
+        document.getElementById('warning-violation-type').textContent = violationLabel;
+        document.getElementById('warning-modal-subtitle').textContent = `Peringatan ${data.count}/3 — ${violationLabel}`;
+        document.getElementById('warning-modal').classList.remove('hidden');
+
+        // Auto-hide setelah 7 detik jika siswa sudah kembali
+        setTimeout(() => {
+            if (examState.examActive && !examState.lockMode.isLocked) {
+                document.getElementById('warning-modal').classList.add('hidden');
+            }
+        }, 7000);
+    } else {
+        // ── Peringatan ke-3: tampilkan modal merah bahaya ──────────
+        // Modal kicked ditampilkan oleh handleKicked()
+        // — handleWarning untuk count=3 adalah sinyal bahwa onLocked akan menyusul
+        // Tapi kita tampilkan kicked-modal dari sini juga untuk responsivitas
+        document.getElementById('warning-modal').classList.add('hidden');
+    }
+
+    // Kirim pelanggaran ke server
+    sendViolationToServer(data);
 }
 
 function handleKicked(data) {
-    console.error('🔒 KICKED - Max warnings exceeded');
-    
+    console.error('🔒 KICKED — Max warnings exceeded');
+
     examState.examActive = false;
     examState.lockMode.setExamActive(false);
-    
-    // Hide warning modal and show kicked modal
+
+    // Sembunyikan warning modal, tampilkan kicked modal
     document.getElementById('warning-modal').classList.add('hidden');
     document.getElementById('kicked-modal').classList.remove('hidden');
-    
-    // Auto-submit exam
-    autoSubmitExam();
+
+    // Countdown auto-redirect
+    let countdown = 5;
+    document.getElementById('kicked-counter-num').textContent = countdown;
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        document.getElementById('kicked-counter-num').textContent = countdown;
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            autoSubmitExam(true); // true = auto-submit karena pelanggaran
+        }
+    }, 1000);
+
+    // Auto-submit langsung (tidak tunggu countdown)
+    autoSubmitExam(true);
+}
+
+function closeWarningModal() {
+    document.getElementById('warning-modal').classList.add('hidden');
+}
+
+// ==================== SERVER COMMUNICATION ====================
+function sendViolationToServer(data) {
+    if (!examState.currentExam) return;
+
+    fetch(`/ujian/${examState.currentExam.id}/violation`, {
+        method:  'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+        },
+        body: JSON.stringify({
+            quiz_id:        examState.currentExam.id,
+            violation_type: data.type,
+            warning_count:  data.count,
+        }),
+    })
+    .then(r => r.json())
+    .then(res => console.log('✓ Violation logged:', res))
+    .catch(err => console.error('✗ Failed to log violation:', err));
+}
+
+function logExamEvent(quizId, eventType, details) {
+    fetch(`/ujian/${quizId}/log-event`, {
+        method:  'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+        },
+        body: JSON.stringify({ event_type: eventType, details }),
+    }).catch(err => console.error('Failed to log event:', err));
 }
 
 // ==================== QUESTION RENDERING ====================
 function renderQuestion() {
     if (!examState.questions[examState.currentQuestion]) return;
-    
-    const q = examState.questions[examState.currentQuestion];
-    const qIndex = examState.currentQuestion;
-    const isAnswered = examState.answers[qIndex] !== undefined;
+
+    const q         = examState.questions[examState.currentQuestion];
+    const qIndex    = examState.currentQuestion;
     const isDoubtful = examState.doubtful[qIndex] || false;
-    
-    // Update header
-    document.getElementById('q-number').textContent = qIndex + 1;
-    document.getElementById('total-questions').textContent = examState.questions.length;
-    
-    // Update doubtful button
+
+    document.getElementById('q-number').textContent         = qIndex + 1;
+    document.getElementById('total-questions').textContent  = examState.questions.length;
+
+    // Doubtful button
     const btn = document.getElementById('doubtful-btn');
     if (isDoubtful) {
         btn.style.backgroundColor = '#fbbf24';
-        btn.style.color = '#78350f';
-        btn.style.borderColor = '#f59e0b';
-        btn.innerHTML = '<i class="fa-solid fa-bookmark mr-1"></i> Ragu (Ditandai)';
+        btn.style.color           = '#78350f';
+        btn.style.borderColor     = '#f59e0b';
+        btn.innerHTML             = '<i class="fa-solid fa-bookmark mr-1"></i> Ragu (Ditandai)';
     } else {
         btn.style.backgroundColor = '#f1f5f9';
-        btn.style.color = '#64748b';
-        btn.style.borderColor = '#e2e8f0';
-        btn.innerHTML = '<i class="fa-solid fa-bookmark mr-1"></i> Tandai Ragu';
+        btn.style.color           = '#64748b';
+        btn.style.borderColor     = '#e2e8f0';
+        btn.innerHTML             = '<i class="fa-solid fa-bookmark mr-1"></i> Tandai Ragu';
     }
-    
-    // Question text
+
     document.getElementById('question-text').textContent = q.question_text || 'Soal tidak tersedia';
-    
-    // Options
+
     const container = document.getElementById('options-container');
     container.innerHTML = '';
-    
+
     if (q.options && Array.isArray(q.options)) {
         q.options.forEach((option, idx) => {
-            const label = String.fromCharCode(65 + idx);
+            const label      = String.fromCharCode(65 + idx);
             const isSelected = examState.answers[qIndex] === label;
-            
-            const btn = document.createElement('button');
-            btn.onclick = () => selectAnswer(qIndex, label);
-            btn.className = `w-full text-left p-4 rounded-2xl border transition-all text-sm flex items-start gap-3 ${
-                isSelected 
-                    ? 'border-blue-600 bg-blue-50 font-bold' 
+
+            const optBtn = document.createElement('button');
+            optBtn.onclick   = () => selectAnswer(qIndex, label);
+            optBtn.className = `w-full text-left p-4 rounded-2xl border transition-all text-sm flex items-start gap-3 ${
+                isSelected
+                    ? 'border-blue-600 bg-blue-50 font-bold'
                     : 'border-slate-200 bg-white hover:bg-slate-50'
             }`;
-            btn.innerHTML = `
+            optBtn.innerHTML = `
                 <span class="w-6 h-6 rounded-lg ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'} flex items-center justify-center text-xs font-bold flex-shrink-0">${label}</span>
                 <span class="text-slate-700">${option}</span>
             `;
-            
-            container.appendChild(btn);
+            container.appendChild(optBtn);
         });
     }
 }
@@ -520,22 +636,20 @@ function renderQuestion() {
 function renderQuestionMap() {
     const container = document.getElementById('question-map');
     container.innerHTML = '';
-    
+
     examState.questions.forEach((q, idx) => {
-        const btn = document.createElement('button');
-        btn.onclick = () => goToQuestion(idx);
-        
+        const btn        = document.createElement('button');
+        btn.onclick      = () => goToQuestion(idx);
         const isAnswered = examState.answers[idx] !== undefined;
         const isDoubtful = examState.doubtful[idx];
-        const isCurrent = examState.currentQuestion === idx;
-        
+        const isCurrent  = examState.currentQuestion === idx;
+
         let bgClass = 'bg-slate-100 text-slate-700';
-        if (isDoubtful) bgClass = 'bg-amber-500 text-white';
+        if (isDoubtful)              bgClass = 'bg-amber-500 text-white';
         if (isAnswered && !isDoubtful) bgClass = 'bg-blue-600 text-white';
-        
-        btn.className = `w-10 h-10 rounded-lg ${bgClass} font-bold text-xs flex items-center justify-center transition-all ${isCurrent ? 'ring-2 ring-offset-2 ring-blue-600' : ''}`;
+
+        btn.className  = `w-10 h-10 rounded-lg ${bgClass} font-bold text-xs flex items-center justify-center transition-all ${isCurrent ? 'ring-2 ring-offset-2 ring-blue-600' : ''}`;
         btn.textContent = idx + 1;
-        
         container.appendChild(btn);
     });
 }
@@ -577,66 +691,121 @@ function nextQuestion() {
 
 // ==================== TIMER ====================
 function startTimer() {
+    if (examState.timerInterval) clearInterval(examState.timerInterval);
+
     const duration = examState.currentExam.duration_minutes * 60;
     examState.timeRemaining = duration;
-    
+
     examState.timerInterval = setInterval(() => {
         if (!examState.examActive) {
             clearInterval(examState.timerInterval);
             return;
         }
-        
+
         examState.timeRemaining--;
-        
+
         const mins = Math.floor(examState.timeRemaining / 60);
         const secs = examState.timeRemaining % 60;
-        
-        document.getElementById('timer').textContent = 
-            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        
+        const timerEl = document.getElementById('timer');
+
+        timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        // Warning saat 5 menit tersisa
+        if (examState.timeRemaining === 300) {
+            timerEl.classList.add('text-yellow-400');
+        }
+        // Warning saat 1 menit tersisa
+        if (examState.timeRemaining === 60) {
+            timerEl.classList.remove('text-yellow-400');
+            timerEl.classList.add('text-red-400');
+        }
+
         if (examState.timeRemaining <= 0) {
             clearInterval(examState.timerInterval);
-            autoSubmitExam();
+            autoSubmitExam(false); // false = auto-submit karena waktu habis
         }
     }, 1000);
 }
 
 // ==================== EXAM SUBMISSION ====================
 function submitExam() {
-    if (confirm('Apakah Anda yakin ingin mengumpulkan ujian?\n\nJawaban yang belum disimpan akan hilang.')) {
-        autoSubmitExam();
+    if (confirm('Apakah Anda yakin ingin mengumpulkan ujian?\n\nPastikan semua soal sudah dijawab.')) {
+        autoSubmitExam(false);
     }
 }
 
-function autoSubmitExam() {
+function autoSubmitExam(isViolation = false) {
     clearInterval(examState.timerInterval);
+    examState.examActive = false;
+
+    if (examState.lockMode) {
+        examState.lockMode.setExamActive(false);
+    }
+
+    const submitReason = isViolation ? 'auto_violation' : 'manual_or_timeout';
     
-    console.log('📝 Exam submitted:', {
-        exam: examState.currentExam.title,
-        answers: examState.answers,
+    console.log('📝 Submitting exam:', {
+        exam:     examState.currentExam?.title,
+        answers:  examState.answers,
         answered: Object.keys(examState.answers).length,
-        total: examState.questions.length
+        total:    examState.questions.length,
+        reason:   submitReason,
     });
-    
-    alert('Ujian telah dikumpulkan. Jawaban Anda tersimpan di sistem.');
-    goBackToList();
+
+    // Kirim ke server
+    fetch(`/ujian/${examState.currentExam.id}/submit`, {
+        method:  'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': CSRF_TOKEN,
+        },
+        body: JSON.stringify({
+            quiz_id:        examState.currentExam.id,
+            answers:        examState.answers,
+            submit_reason:  submitReason,
+            violation_count: examState.warningCount,
+        }),
+    })
+    .then(r => r.json())
+    .then(res => {
+        console.log('✓ Exam submitted:', res);
+        if (!isViolation) {
+            // Hanya kembali ke list jika bukan via kicked-modal
+            // (kicked-modal punya tombolnya sendiri)
+            goBackToList();
+        }
+    })
+    .catch(err => {
+        console.error('✗ Submit failed:', err);
+        if (!isViolation) goBackToList();
+    });
 }
 
 function goBackToList() {
     examState.examActive = false;
     if (examState.lockMode) {
         examState.lockMode.setExamActive(false);
+        // [FIX #1] Destroy listeners saat keluar ujian
+        examState.lockMode.destroyEventListeners();
+        examState.lockMode = null;
     }
-    
+
+    clearInterval(examState.timerInterval);
+
     document.getElementById('exam-room-view').style.display = 'none';
     document.getElementById('exam-list-view').style.display = 'block';
     document.getElementById('warning-modal').classList.add('hidden');
     document.getElementById('kicked-modal').classList.add('hidden');
+    document.getElementById('warning-counter').textContent = '0';
+
+    // Reset timer display
+    document.getElementById('timer').textContent = '--:--';
+    document.getElementById('timer').className   = 'text-slate-100';
 }
 
 function exitExam() {
     if (confirm('Keluar dari ujian?\n\nJawaban yang sudah ada akan disimpan.')) {
-        goBackToList();
+        autoSubmitExam(false);
     }
 }
 </script>

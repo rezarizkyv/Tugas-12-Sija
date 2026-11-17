@@ -45,4 +45,14 @@ class Quiz extends Model
     {
         return $this->hasMany(ExamLog::class);
     }
+
+    public function examSessions(): HasMany
+    {
+        return $this->hasMany(ExamSession::class);
+    }
+
+    public function examViolations(): HasMany
+    {
+        return $this->hasMany(ExamViolation::class);
+    }
 }

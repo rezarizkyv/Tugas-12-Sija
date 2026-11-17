@@ -24,12 +24,18 @@ class AuthController extends Controller
 
     /**
      * Proses login.
+     * Proses login (bisa menggunakan Email ATAU Username).
      */
     public function login(Request $request)
     {
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required', 'min:6'],
+        $request->validate([
+            'email'    => ['nullable', 'string'],
+            'login'    => ['nullable', 'string'],
+            'email'    => ['nullable', 'string'],
+            'password' => ['required', 'string'],
         ], [
             'email.required'    => 'Email wajib diisi.',
             'email.email'       => 'Format email tidak valid.',
@@ -37,9 +43,22 @@ class AuthController extends Controller
             'password.min'      => 'Password minimal 6 karakter.',
         ]);
 
+        $loginInput = trim($request->input('login', $request->input('email', '')));
+
+        if (empty($loginInput)) {
+            return back()
+                ->withInput($request->only('email', 'login'))
+                ->withErrors(['email' => 'Email atau Username wajib diisi.']);
+        }
+
         $remember = $request->boolean('remember');
 
         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']], $remember)) {
+        // Cek apakah login via email atau username
+        $fieldType = filter_var($loginInput, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+        if (Auth::attempt([$fieldType => $loginInput, 'password' => $credentials['password']], $remember)) {
+        if (Auth::attempt([$fieldType => $loginInput, 'password' => $request->password], $remember)) {
             $request->session()->regenerate();
 
             return $this->redirectByRole();
@@ -48,6 +67,8 @@ class AuthController extends Controller
         return back()
             ->withInput($request->only('email'))
             ->withErrors(['email' => 'Email atau password tidak cocok. Silakan coba lagi.']);
+            ->withInput($request->only('email', 'login'))
+            ->withErrors(['email' => 'Akun atau password tidak cocok. Silakan coba lagi.']);
     }
 
     /**

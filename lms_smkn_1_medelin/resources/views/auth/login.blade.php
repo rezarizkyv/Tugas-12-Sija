@@ -564,21 +564,28 @@
             @csrf
 
             <!-- Email -->
+            <!-- Email / Username -->
             <div class="form-group">
                 <label class="form-label" for="email">
                     <i class="fa-solid fa-envelope" style="margin-right:5px; color:#38bdf8;"></i>
                     Alamat Email
+                    <i class="fa-solid fa-user-circle" style="margin-right:5px; color:#38bdf8;"></i>
+                    Email atau Nama Siswa / Username
                 </label>
                 <div class="input-wrap">
                     <i class="fa-solid fa-envelope input-icon"></i>
+                    <i class="fa-solid fa-user input-icon"></i>
                     <input
                         id="email"
                         type="email"
+                        type="text"
                         name="email"
                         class="form-input {{ $errors->has('email') ? 'input-error' : '' }}"
                         value="{{ old('email') }}"
                         placeholder="contoh@smkn1medelin.sch.id"
                         autocomplete="email"
+                        placeholder="Masukkan Email atau Username Anda"
+                        autocomplete="username"
                         required
                         autofocus
                     >
@@ -637,6 +644,7 @@
         </form>
 
         <!-- Demo Accounts Section -->
+        <!-- Informasi Akun -->
         <div class="demo-section">
             <p class="demo-label">
                 <i class="fa-solid fa-key" style="margin-right:4px;"></i>
@@ -657,8 +665,16 @@
                     <div class="demo-card-role">Siswa</div>
                     <div class="demo-card-info">siswa@smkn1<br>medelin.sch.id</div>
                 </div>
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="font-size: 0.8rem; font-weight: 700; color: #38bdf8;">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Informasi Login
+                </p>
+                <p style="font-size: 0.72rem; color: var(--slate-400); margin-top: 4px;">
+                    Siswa silakan masuk menggunakan username/email masing-masing dengan password: <code style="background: rgba(56,189,248,0.15); color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-weight: 800;">12345</code>
+                </p>
             </div>
             <div style="text-align: center; margin-top: 1.5rem;">
+            <div style="text-align: center;">
                 <p style="font-size: 0.85rem; color: var(--slate-400);">
                     Belum punya akun? 
                     <a href="{{ route('register') }}" class="forgot-link">Daftar sekarang</a>

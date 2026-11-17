@@ -269,6 +269,20 @@
                         <span class="nav-dot ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:#38bdf8;"></span>
                     </a>
 
+                    @if(Auth::check() && Auth::user()->role === 'admin')
+                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(56,189,248,0.1);">
+                        <p style="padding: 0.25rem 0.5rem; font-size:9px; font-weight:800; letter-spacing:0.18em; text-transform:uppercase; color:#38bdf8;">
+                            Menu Administrator
+                        </p>
+                        <a href="{{ route('admin.dashboard') }}"
+                           class="nav-item {{ request()->routeIs('admin.dashboard') ? 'nav-active' : '' }} flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm" style="color: #38bdf8;">
+                            <i class="fa-solid fa-gauge-high w-5 text-center flex-shrink-0" style="font-size:0.9rem; color:#38bdf8;"></i>
+                            <span>Admin Monitoring CBT</span>
+                            <span class="nav-dot ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:#38bdf8;"></span>
+                        </a>
+                    </div>
+                    @endif
+
                 </nav>
             </div>
 

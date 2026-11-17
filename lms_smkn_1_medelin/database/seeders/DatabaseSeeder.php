@@ -28,6 +28,17 @@ class DatabaseSeeder extends Seeder
             'nis'      => null,
             'kelas'    => null,
         ]);
+        User::firstOrCreate(
+            ['email' => 'admin@smkn1medelin.sch.id'],
+            [
+                'name'     => 'Administrator',
+                'username' => 'admin',
+                'password' => Hash::make('admin123'),
+                'role'     => 'admin',
+                'nis'      => null,
+                'kelas'    => null,
+            ]
+        );
 
         // =============================================
         // AKUN SISWA / USER BIASA
@@ -45,6 +56,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            StudentUserSeeder::class,
             CourseSeeder::class,
         ]);
     }

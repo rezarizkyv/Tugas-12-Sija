@@ -48,4 +48,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/ujian', [UjianController::class, 'index'])->name('ujian');
     Route::get('/gradebook', [GradebookController::class, 'index'])->name('gradebook');
     Route::get('/monitoring-osis', [MonitoringOsisController::class, 'index'])->name('monitoring-osis');
+
+    // ── CBT Exam API (Siswa) ──────────────────────────────────────
+    Route::post('/ujian/{id}/log-event',  [UjianController::class, 'logEvent'])->name('ujian.log-event');
+    Route::post('/ujian/{id}/violation',  [UjianController::class, 'recordViolation'])->name('ujian.violation');
+    Route::post('/ujian/{id}/submit',     [UjianController::class, 'submitExam'])->name('ujian.submit');
+});
+
+// Route khusus Admin - CBT Monitoring API
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/cbt/monitoring', [UjianController::class, 'adminMonitoring'])->name('cbt.monitoring');
 });

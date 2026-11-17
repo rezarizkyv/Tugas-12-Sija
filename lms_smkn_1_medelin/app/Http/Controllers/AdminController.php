@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Quiz;
+use App\Models\ExamSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,7 +22,6 @@ class AdminController extends Controller
         ];
 
         $users = User::where('role', 'user')->latest()->get();
-        $admins = User::where('role', 'admin')->latest()->get();
 
         // Simulasi data tugas yang belum diunggah oleh user biasa
         $missingTasks = [
@@ -29,6 +30,15 @@ class AdminController extends Controller
             (object)['student' => 'Siti Aminah', 'course' => 'Desain UI/UX', 'task' => 'Tugas Akhir Prototype'],
         ];
 
-        return view('admin.dashboard', compact('stats', 'users', 'admins', 'missingTasks'));
+        // Data CBT monitoring ringkasan
+        $cbtStats = [
+            'total_sessions'    => ExamSession::count(),
+            'in_progress'       => ExamSession::where('status', 'in_progress')->count(),
+            'auto_submitted'    => ExamSession::where('status', 'auto_submitted')->count(),
+            'completed'         => ExamSession::whereIn('status', ['completed', 'timeout'])->count(),
+            'active_quizzes'    => Quiz::where('status', 'active')->count(),
+        ];
+
+        return view('admin.dashboard', compact('stats', 'users', 'missingTasks', 'cbtStats'));
     }
 }
